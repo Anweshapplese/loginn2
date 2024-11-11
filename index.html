@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Ocean blue background with a gradient effect */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0099cc, #00b3b3);
+      color: #fff;
+    }
+
+    /* Centering and styling the login container */
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      color: #333;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #0099cc;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    /* Form field styling */
+    .form-group {
+      width: 100%;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    input[type="text"], input[type="password"], input[type="submit"] {
+      width: 100%;
+      padding: 10px 15px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input[type="submit"] {
+      background-color: #0099cc;
+      color: white;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #007b8a;
+    }
+
+    /* Error and password strength message */
+    .error-message, .highlight {
+      font-size: 12px;
+      color: #f44336;
+      text-align: center;
+    }
+
+    .highlight {
+      color: #ffcc00;
+      margin-top: 10px;
+    }
+
+    /* Icons */
+    .input-icon, .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: #0099cc;
+    }
+
+    .toggle-password {
+      cursor: pointer;
+    }
+
+    /* Captcha Styling */
+    .captcha-box {
+      background-color: #f1f1f1;
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="password"]:focus {
+      border-color: #0099cc;
+      outline: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h2>Login Page</h2>
+    <form id="login-form">
+      <!-- Username field -->
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <i class="fas fa-user input-icon"></i>
+      </div>
+
+      <!-- Password field with toggle icon -->
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <i class="fas fa-eye-slash toggle-password" id="toggle-password"></i>
+        <div id="password-errors" class="error-message"></div>
+      </div>
+
+      <!-- Captcha field -->
+      <div class="form-group">
+        <label for="captcha">Captcha:</label>
+        <div id="captcha-question" class="captcha-box" onclick="toggleCaptcha()">Click to change captcha</div>
+        <input type="text" id="captcha-answer" name="captcha" required placeholder="Enter answer here">
+        <div id="captcha-error" class="error-message"></div>
+      </div>
+
+      <!-- Password strength info -->
+      <div class="highlight">
+        Password must be: 8-128 chars, 1 Uppercase, 1 Lowercase, 1 Number, 1 Special char
+      </div>
+
+      <!-- Login Button -->
+      <div class="form-group">
+        <input type="submit" value="Login">
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let num1, num2, operator, randomCaptcha, captchaType;
+
+    // Function to generate random captcha (either arithmetic or random alphabets)
+    function generateCaptcha() {
+      const captchaChoice = Math.random() > 0.5 ? 'arithmetic' : 'alphabets';
+      captchaType = captchaChoice;
+
+      if (captchaChoice === 'arithmetic') {
+        // Generate random arithmetic operation
+        num1 = Math.floor(Math.random() * 10) + 1;
+        num2 = Math.floor(Math.random() * 10) + 1;
+        const operators = ['+', '-', '*'];
+        operator = operators[Math.floor(Math.random() * operators.length)];
+        document.getElementById('captcha-question').innerText = `${num1} ${operator} ${num2}`;
+      } else {
+        // Generate random 4 characters (letters only)
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        randomCaptcha = "";
+        for (let i = 0; i < 4; i++) {
+          randomCaptcha += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        }
+        document.getElementById('captcha-question').innerText = randomCaptcha;
+      }
+    }
+
+    // Initially generate captcha
+    generateCaptcha();
+
+    // Function to toggle captcha type when clicked
+    function toggleCaptcha() {
+      generateCaptcha(); // Regenerate a new captcha each time the user clicks
+    }
+
+    // Toggle password visibility
+    document.getElementById('toggle-password').addEventListener('click', function() {
+      const passwordField = document.getElementById('password');
+      const type = passwordField.type === 'password' ? 'text' : 'password';
+      passwordField.type = type;
+
+      // Change the icon based on visibility
+      const icon = type === 'password' ? 'fa-eye-slash' : 'fa-eye';
+      this.classList.remove('fa-eye-slash', 'fa-eye');
+      this.classList.add(icon);
+    });
+
+    // Check password strength and captcha answer
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const password = document.getElementById('password').value;
+      const captchaAnswer = document.getElementById('captcha-answer').value;
+
+      // Check password strength
+      const passwordStrength = checkPasswordStrength(password);
+      if (!passwordStrength.valid) {
+        document.getElementById('password-errors').innerText = passwordStrength.message;
+        return;
+      } else {
+        document.getElementById('password-errors').innerText = '';
+      }
+
+      // Check captcha answer based on the type
+      let correctAnswer;
+      if (captchaType === 'arithmetic') {
+        switch (operator) {
+          case '+':
+            correctAnswer = num1 + num2;
+            break;
+          case '-':
+            correctAnswer = num1 - num2;
+            break;
+          case '*':
+            correctAnswer = num1 * num2;
+            break;
+        }
+        correctAnswer = correctAnswer.toString();
+      } else {
+        correctAnswer = randomCaptcha;
+      }
+
+      // Validate captcha answer
+      if (captchaAnswer === correctAnswer) {
+        console.log('Login successful!');
+        alert('Login successful!');
+      } else {
+        // Show captcha error message below the captcha input field
+        document.getElementById('captcha-error').innerText = 'Invalid captcha answer!';
+        generateCaptcha();  // Regenerate captcha if answer is incorrect
+      }
+    });
+
+    // Function to check password strength
+    function checkPasswordStrength(password) {
+      const errors = [];
+
+      if (password.length < 8 || password.length > 128) {
+        errors.push('Password length must be between 8 and 128 characters');
+      }
+
+      if (!/[A-Z]/.test(password)) {
+        errors.push('Password must contain an uppercase letter');
+      }
+
+      if (!/[a-z]/.test(password)) {
+        errors.push('Password must contain a lowercase letter');
+      }
+
+      if (!/\d/.test(password)) {
+        errors.push('Password must contain a number');
+      }
+
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        errors.push('Password must contain a special character');
+      }
+
+      if (errors.length > 0) {
+        return { valid: false, message: errors.join(', ') };
+      }
+
+      return { valid: true, message: '' };
+    }
+
+  </script>
+</body>
+</html>
